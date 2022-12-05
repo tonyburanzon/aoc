@@ -22,24 +22,16 @@ def letterPoints(letter):
     else:
         return ord(letter) - ord('a') + 1
 
-input = open("test_input", "r")
+input = open("input", "r")
 
 lines = input.readlines()
 
-print(type(lines))
+numGroups = int(len(lines) / 3)
+groups = [lines[i*3:i*3+3] for i in range(numGroups)]
 
 total = 0
-groups = lines[::3]
-print(groups)
-"""
-for line in lines: 
-    line = line.strip()
-    totChars = int(len(line)/2)
-    lSide = line[:totChars]
-    rSide = line[totChars:]
-
-    matchedLetter = findMatch(lSide, rSide)
+for group in groups:
+    matchedLetter = findMatch(group[0].strip(), group[1].strip(), group[2].strip())
     total += letterPoints(matchedLetter)
 
 print(total)
-"""
