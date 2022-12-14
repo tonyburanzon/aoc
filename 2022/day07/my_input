@@ -1,0 +1,14 @@
+$ cd /
+$ ls
+dir tony
+dir teddy
+123 esh
+345 ells
+$ cd tony
+$ ls
+456 minnie
+567 teds
+$ cd ..
+$ cd teddy
+$ ls
+678 t1
