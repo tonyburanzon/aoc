@@ -16,8 +16,8 @@ public:
     {
       //bool seq_ok = increase ? levels[i] < levels[i+1] : levels[i] > levels[i+1];
       bool seq_ok = (i == 0 || 
-        (levels[i-1] < levels[i] && levels[i] > levels[i+1]) || 
-        (levels[i-1] > levels[i] && levels[i] < levels[i+1]));
+        (levels[i-1] < levels[i] && levels[i] < levels[i+1]) || 
+        (levels[i-1] > levels[i] && levels[i] > levels[i+1]));
 
       bool delta_ok = abs(levels[i] - levels[i+1]) <= 3 && abs(levels[i] - levels[i+1]) != 0;
       if(!seq_ok || !delta_ok)
@@ -26,37 +26,23 @@ public:
     return true;
   };
 
-  bool isSafeMod(vector<int> locLevels)
-  {
-    //    bool previous_bad = false;
-    //    for(int i = 0; i < levels.size(); i++)
-    //    {
-    //      if(
-    //        (i < (levels.size() - 1) && levels[i] == levels[i+1]) ||
-    //        (i > 0 && levels[i-i] < levels[i] && levels[i] > levels[i+1]) || 
-    //        (i < (levels.size() - 1) && levels[i-1] > levels[i] && levels[i] < levels[i+1]) ||
-    //        (abs(levels[i] - levels[i+1]) > 3)
-    //      )
-    //      {
-    //        // We found a bad index, try removing and move index back one.
-    //        if(previous_bad)
-    //          return false;
-    //        if(i == levels.size() - 2)
-    //          return true;
-    //
-    //        // Set flag, remove bad index, and try again
-    //        previous_bad = true;
-    //        levels.erase(levels.begin()+i);
-    //        i = -1;
-    //        continue;
-    //      }
-    //
-    //    } 
-    //    return true;
-    //  }
-    return true;
-  }
 };
+
+bool isSafeMod(int removeIndex, vector<int> locLevels)
+{
+  locLevels.erase(locLevels.begin()+removeIndex);
+  for(int i = 0; i < locLevels.size() - 1; i++)
+  {
+    bool seq_ok = (i == 0 || 
+      (locLevels[i-1] < locLevels[i] && locLevels[i] < locLevels[i+1]) || 
+      (locLevels[i-1] > locLevels[i] && locLevels[i] > locLevels[i+1]));
+
+    bool delta_ok = abs(locLevels[i] - locLevels[i+1]) <= 3 && abs(locLevels[i] - locLevels[i+1]) != 0;
+    if(!seq_ok || !delta_ok)
+      return false;
+  }
+  return true;
+}
 
 int main()
 {
@@ -78,14 +64,25 @@ int main()
   int safe_count = 0;
   for(int i = 0; i < reports.size(); i++)
   {
-    if(
-      reports[i].isSafe()
-    )
+    if(reports[i].isSafe())
     {
       safe_count++;
+      continue;
     }
     else
-    cout << i+1 << ": Not Safe" << endl;
+    {
+      bool safe = false;
+      for(int j = 0; j < reports[i].levels.size(); j++) 
+      {
+        if(isSafeMod(j , reports[i].levels))
+        {
+          safe = true;
+          break;
+        }
+      }
+      if(safe)
+        safe_count++;
+    }
   }
 
   cout << safe_count << endl;
