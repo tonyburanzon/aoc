@@ -31,8 +31,8 @@ int main()
 
   map<int, Counter> myMap;
 
-//  sort(left_list.begin(), left_list.end());
-//  sort(right_list.begin(), right_list.end());
+  //sort(left_list.begin(), left_list.end());
+  //sort(right_list.begin(), right_list.end());
 
   for(int i = 0; i < left_list.size(); i++)
   {
