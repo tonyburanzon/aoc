@@ -52,7 +52,7 @@ int main()
   }
 
 
-  cout << "Before: " << pages.size() << endl;
+  vector<vector<int>> broken_pages;
   for(int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++)
   {
     for(int pageIndex = 0; pageIndex < pages.size(); pageIndex++)
@@ -67,6 +67,7 @@ int main()
         }
         if(found && pages[pageIndex][i] == rules[ruleIndex][1])
         {
+          broken_pages.push_back(pages[pageIndex]);
           pages.erase(pages.begin()+pageIndex);
           pageIndex--;
           break;
@@ -75,12 +76,42 @@ int main()
     }
   }
 
-  cout << "After: " << pages.size() << endl;
+  for(int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++)
+  {
+    for(int pageIndex = 0; pageIndex < broken_pages.size(); pageIndex++)
+    {
+      bool found;
+      int foundIndex = -1;
+      for(int i = broken_pages[pageIndex].size() - 1; i >= 0; i--)
+      {
+        if(broken_pages[pageIndex][i] == rules[ruleIndex][0])
+        {
+          found = true;
+          foundIndex = i;
+          cout << foundIndex << endl;
+          continue;
+        };
+        if(found && broken_pages[pageIndex][i] == rules[ruleIndex][1])
+        {
+          int num = broken_pages[pageIndex][i];
+          broken_pages[pageIndex].erase(broken_pages[pageIndex].begin()+i);
+          broken_pages[pageIndex].insert(broken_pages[pageIndex].begin()+foundIndex+1, num);
+          break;
+        }
+      }
+    }
+  }
+
+  cout << "Broken: " << broken_pages.size() << endl;
 
   int count = 0;
-  for(int i = 0; i < pages.size(); i++)
+  for(int i = 0; i < broken_pages.size(); i++)
   {
-    count += pages[i][pages[i].size() / 2];
+    cout << "Size: " << broken_pages[i].size() << broken_pages[i][broken_pages[i].size() / 2] << endl;
+    for(int j = 0; j < broken_pages[i].size(); j++)
+      cout << broken_pages[i][j] << " ";
+    cout << endl;
+    count += broken_pages[i][broken_pages[i].size() / 2];
   }
 
   cout << "Count: " << count << endl;
