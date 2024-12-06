@@ -9,12 +9,9 @@ int rowSize = 0;
 int colSize = 0;
 int searchUpLeft(int row, int col, vector<string>& ws)
 {
-  if(row < 3 || row < 3)
+  if(row < 3 || col < 3)
     return 0;
   if((ws[row-1][col-1]) == 'M' && ws[row-2][col-2] == 'A' && ws[row-3][col-3] == 'S')
-  {
-    cout << "Up Left" << endl;
-  }
     return 1;
   return 0;
 }
@@ -28,9 +25,9 @@ int searchUpRight(int row, int col, vector<string>& ws)
 }
 int searchDownLeft(int row, int col, vector<string>& ws)
 {
-  if(row < 3 || col > colSize - 4)
+  if(row > rowSize - 4 || col < 3)
     return 0;
-  if(ws[row - 1][col+1] == 'M' && ws[row - 2][col+2] == 'A' && ws[row - 3][col+3] == 'S')
+  if(ws[row + 1][col-1] == 'M' && ws[row + 2][col-2] == 'A' && ws[row + 3][col-3] == 'S')
     return 1;
   return 0;
 }
@@ -108,12 +105,10 @@ int main()
   {
     for(int col = 0; col < colSize; col++)
     {
-      cout << ws[row][col];
       if(ws[row][col] == 'X')
       {
         count += find_xmas(row, col, ws);
       }
-      cout << endl;
     }
   }
   cout << "Count: " << count << endl;
