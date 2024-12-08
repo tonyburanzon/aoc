@@ -11,12 +11,6 @@ struct Calc
   queue<long long> operands;
 };
 
-struct Sum
-{
-  long long added_sum;
-  long long mult_sum;
-};
-
 bool multiply_next(long long, long long, queue<long long>);
 bool add_next(long long, long long, queue<long long>);
 
@@ -27,10 +21,8 @@ bool multiply_next(long long target, long long total, queue<long long> operands)
   long long next_num = operands.front();
   operands.pop();
   total *= next_num;
-  queue<long long> add_operands(operands);
-  queue<long long> mult_operands(operands);
-  return multiply_next(target, total, mult_operands) ||
-    add_next(target, total, mult_operands);
+  return multiply_next(target, total, operands) ||
+    add_next(target, total, operands);
 }
 
 bool add_next(long long target, long long total, queue<long long> operands)
@@ -40,21 +32,17 @@ bool add_next(long long target, long long total, queue<long long> operands)
   long long next_num = operands.front();
   operands.pop();
   total += next_num;
-  queue<long long> add_operands(operands);
-  queue<long long> mult_operands(operands);
-  return multiply_next(target, total, mult_operands) ||
-    add_next(target, total, add_operands);
+  return multiply_next(target, total, operands) ||
+    add_next(target, total, operands);
 }
 
 bool maths_out(long long target, queue<long long> operands)
 {
   long long total = operands.front();
   operands.pop();
-  queue<long long> add_operands(operands);
-  queue<long long> mult_operands(operands);
 
-  return multiply_next(target, total, mult_operands) ||
-    add_next(target, total, add_operands);
+  return multiply_next(target, total, operands) ||
+    add_next(target, total, operands);
 }
 
 int main()
