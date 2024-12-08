@@ -5,6 +5,57 @@
 
 using namespace std;
 
+vector<vector<int>> getRulesForNum(vector<vector<int>> rules, int num)
+{
+  vector<vector<int>> retRules;
+  for(int i = 0; i < rules.size(); i++)
+  {
+    if(rules[i][1] == num)
+      retRules.push_back(rules[i]);
+  }
+  return retRules;
+};
+
+bool numberBeenSorted(vector<int> sortedNums, int num)
+{
+  for(int i = 0; i < sortedNums.size(); i++)
+    if(sortedNums[i] == num)
+      return true;
+  return false;
+}
+
+void sortPage(vector<int>& page, vector<vector<int>>& rules)
+{
+  vector<int> sortedNumbers;
+  for(int pageIndex = 0; pageIndex < page.size(); pageIndex++)
+  {
+    if(numberBeenSorted(sortedNumbers, page[pageIndex]))
+       continue;
+
+    // Get Rules for current number where current number is the second number in the rule.
+    vector<vector<int>> locRules = getRulesForNum(rules, page[pageIndex]);
+    // find largest index of numbers where the rules first number is in the page
+    int largestIndex = -1;
+    for(int ruleIndex = 0; ruleIndex < locRules.size(); ruleIndex++)
+    {
+      for(int badPageIndex = 0; badPageIndex < page.size(); badPageIndex++)
+      {
+        if(page[badPageIndex] == locRules[ruleIndex][0] && badPageIndex > largestIndex)
+          largestIndex = badPageIndex;
+      }
+    }
+    // Remove and reinsert current number at the index of largest index.
+    if(largestIndex > -1 && largestIndex > pageIndex)
+    {
+      int num = page[pageIndex];
+      page.erase(page.begin()+pageIndex);
+      page.insert(page.begin()+largestIndex, num);
+      pageIndex--;
+      sortedNumbers.push_back(num);
+    }
+  }
+}
+
 int main()
 {
   vector<string> rules_str;
@@ -76,41 +127,14 @@ int main()
     }
   }
 
-  for(int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++)
+  for(int brokenPageIndex = 0; brokenPageIndex < broken_pages.size(); brokenPageIndex++)
   {
-    for(int pageIndex = 0; pageIndex < broken_pages.size(); pageIndex++)
-    {
-      bool found;
-      int foundIndex = -1;
-      for(int i = broken_pages[pageIndex].size() - 1; i >= 0; i--)
-      {
-        if(broken_pages[pageIndex][i] == rules[ruleIndex][0])
-        {
-          found = true;
-          foundIndex = i;
-          cout << foundIndex << endl;
-          continue;
-        };
-        if(found && broken_pages[pageIndex][i] == rules[ruleIndex][1])
-        {
-          int num = broken_pages[pageIndex][i];
-          broken_pages[pageIndex].erase(broken_pages[pageIndex].begin()+i);
-          broken_pages[pageIndex].insert(broken_pages[pageIndex].begin()+foundIndex+1, num);
-          break;
-        }
-      }
-    }
+    sortPage(broken_pages[brokenPageIndex], rules);
   }
-
-  cout << "Broken: " << broken_pages.size() << endl;
 
   int count = 0;
   for(int i = 0; i < broken_pages.size(); i++)
   {
-    cout << "Size: " << broken_pages[i].size() << broken_pages[i][broken_pages[i].size() / 2] << endl;
-    for(int j = 0; j < broken_pages[i].size(); j++)
-      cout << broken_pages[i][j] << " ";
-    cout << endl;
     count += broken_pages[i][broken_pages[i].size() / 2];
   }
 
