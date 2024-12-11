@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -119,6 +120,7 @@ class Game
 {
 public:
   vector<string> start_grid;
+  vector<pair<int, int>> simulatedPositions;
   int start_row;
   int start_col;
   char start_dir;
@@ -236,6 +238,48 @@ public:
     return this->grid[rotated_pos.first][rotated_pos.second] == this->guard.getRotatedDir();
   }
 
+  bool hasPositionBeenSimulated(pair<int, int> pos)
+  {
+    for(int i = 0; i < this->simulatedPositions.size(); i++)
+      if(this->simulatedPositions[i].first == pos.first && this->simulatedPositions[i].second == pos.second)
+        return true;
+    return false;
+  }
+
+  bool simulateRotationRun()
+  {
+    if(this->hasPositionBeenSimulated(make_pair(this->guard.row,this->guard.col)))
+       return false;
+    Guard locGuard = Guard(this->guard);
+    //vector<string> locGrid = this->copyGrid();
+    locGuard.changeDir();
+    pair<int, int> next_pos = locGuard.getNextPos();
+    if(this->isNextPosBlocked(next_pos))
+      return false;
+    while(!this->isPosOOB(next_pos))
+    {
+      while(this->isNextPosBlocked(next_pos))
+      {
+        if(this->isPosOOB(next_pos))
+          return false;
+        locGuard.changeDir();
+        next_pos = locGuard.getNextPos();
+      }
+      
+      if(this->grid[next_pos.first][next_pos.second] == locGuard.dir)
+        return true;
+      
+      locGuard.move();
+      //locGrid[locGuard.row][locGuard.col] = '*';
+      /*for(int row = 0; row < rowSize; row++)*/
+      /*{*/
+      /*  //cout << locGrid[row] << endl;*/
+      /*}*/
+      next_pos = locGuard.getNextPos();
+    }
+    return false;
+  }
+
   bool hasPosBeenFound(pair<int, int> pos)
   {
     for(int i = 0; i < this->found_positions.size(); i++)
@@ -263,12 +307,25 @@ public:
     cout << endl;
   }
 
+  vector<string> copyGrid()
+  {
+    vector<string> locGrid;
+    string temp;
+    for(int i = 0; i < this->grid.size(); i++)
+    {
+      temp = this->grid[i];
+      locGrid.push_back(temp);
+    }
+    return locGrid;
+  }
+
 
 };
 
 int main()
 {
   Game game;
+  int iteration = 0;
   
   while(!game.isNextPosOOB()) 
   {
@@ -276,7 +333,7 @@ int main()
     {
       cout << "Straight Block" << endl;
       game.found_positions.push_back(game.guard.getStraightBlockPos());
-      game.printGrid();
+      /*game.printGrid();*/
       game.reset();
       continue;
     }
@@ -285,13 +342,25 @@ int main()
     {
       cout << "Rot Block" << endl;
       game.found_positions.push_back(game.guard.getNextPos());
-      game.printGrid();
+      /*game.printGrid();*/
       game.reset();
       continue;
     }
 
+    if(game.simulateRotationRun() && !game.hasPosBeenFound(game.guard.getNextPos()))
+    {
+      cout << "Sim Block" << endl;
+      game.found_positions.push_back(game.guard.getNextPos());
+      /*game.printGrid();*/
+      game.reset();
+      continue;
+    }
+
+
+
     game.moveGuard();
+    cout << iteration++ << endl;
   };
-  game.printFound();
+  //game.printFound();
   cout << game.found_positions.size() << endl;
 }
