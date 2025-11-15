@@ -2,12 +2,13 @@
 #include <string>
 #include <fstream>
 #include <cstdlib>
+#include <vector>
 
 using namespace std;
 
 void read_file(string& str)
 {
-  ifstream file("test_input2");
+  ifstream file("input");
   getline(file, str);
 }
 void write_raw_disk(string& disk_map, vector<int>& raw_disk)
@@ -29,7 +30,7 @@ void write_raw_disk(string& disk_map, vector<int>& raw_disk)
   }
 }
 
-void defrag(vector<int> disk)
+void defrag(vector<int>& disk)
 {
   int leftIndx = 0;
   int rightIndx = disk.size() - 1;
@@ -48,7 +49,7 @@ void defrag(vector<int> disk)
   }
 }
 
-unsigned long long int find_checksum(vector<int> disk)
+unsigned long long int find_checksum(vector<int>& disk)
 {
   unsigned long long int checksum = 0;
   for(unsigned long long int i = 0; i < disk.size(); i++)
@@ -60,7 +61,7 @@ unsigned long long int find_checksum(vector<int> disk)
   }
 
   return checksum;
-};
+}
 
 int main() 
 {
