@@ -30,7 +30,7 @@ int main()
   while(cin >> num)
   {
     Stone s(num);
-    stones.push_back(num);
+    stones.push_back(s);
   }
 
   for(int iter = 0; iter < 75; iter++)
@@ -46,9 +46,10 @@ int main()
         unsigned long long curNum = stones[stoneInd].num;
         unsigned long long digits = find_digits(curNum);
         unsigned long long powerNum = pow(10, digits/2);
-        unsigned long long firstNewNum = curNum / pow(10, digits/2);
+        unsigned long long firstNewNum = curNum / powerNum;
+        unsigned long long secondNewNum = curNum % powerNum;
         stones[stoneInd].num = firstNewNum;
-        stones.insert(stones.begin()+stoneInd+1, Stone(curNum % (firstNewNum * powerNum), stones[stoneInd].count));
+        stones.insert(stones.begin()+stoneInd+1, Stone(secondNewNum, stones[stoneInd].count));
         stoneInd++;
       }
       else 
@@ -57,19 +58,16 @@ int main()
       }
       // Consolidate Stones
     }
-    for(int i = stones.size() - 1; i >=0; i--)
-    {
-      for(int j = 0; j < stones.size(); j++)
-      {
-        if(stones[i].num == stones[j].num && i != j)
-        {
-          stones[j].count += stones[i].count;
-          stones.erase(stones.begin()+i);
+    for(int i = 0; i < stones.size(); i++) {
+      for(int j = stones.size() - 1; j > i; j--) {
+        if(stones[i].num == stones[j].num) {
+          stones[i].count += stones[j].count;
+          stones.erase(stones.begin() + j);
         }
       }
     }
   }
-  int count = 0;
+  unsigned long long count = 0;
   for(int i = 0; i < stones.size(); i++)
     count += stones[i].count;
 
